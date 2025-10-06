@@ -9,7 +9,7 @@ const productSchema = new mongoose.Schema({
   },
   price: {
     type: Number,
-    required: [true, 'Product price is required'],
+    required: false,
     min: [0, 'Price cannot be negative']
   },
   category: {
@@ -19,7 +19,7 @@ const productSchema = new mongoose.Schema({
       'Hexabeads',
       'Hexaboost', 
       'Hexasol',
-      'Fertigel',
+      'Hexagel',
       'Actifert',
       'Hexaraw',
     ]

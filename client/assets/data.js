@@ -16,8 +16,10 @@ import test from "./images/category/test.jpeg"
 
 export const menulists = [
   { id: 1, path: "/",       link: "accueil" },
-  { id: 2, path: "all-products", link: "produit" },
+  { id: 2, path: "/all-products", link: "produit" },
   { id: 3, path: "/about",   link: "à propos" },
+  { id: 4, path: "/auth",   link: "connexion" },
+  { id: 5, path: "/formule",   link: "votre formule" },
   
 ];
 

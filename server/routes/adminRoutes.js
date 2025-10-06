@@ -76,7 +76,7 @@ router.delete('/comments/:commentId', adminController.deleteComment);
 router.get('/users/analytics', adminController.getUsersAnalytics);
 
 // GET /api/admin/users/export - Export users data to CSV
-router.get('/export/users', adminController.exportUsers);
+router.get('/users/export', adminController.exportUsers);
 
 // GET /api/admin/users/:id - Get specific user details with full order history
 router.get('/:id', adminController.getUserDetails);

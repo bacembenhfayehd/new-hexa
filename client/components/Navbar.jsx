@@ -19,11 +19,10 @@ import Image from "next/image";
 import { useAppContext } from "@/context/AppContext";
 import ModernSearchOverlay from "./ModernSearchOverlay";
 
-
 export const User1 = "https://cdn-icons-png.flaticon.com/128/236/236832.png";
 
 function Navbar() {
-  const { cartCount, refreshCart } = useAppContext()
+  const { cartCount, refreshCart } = useAppContext();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -31,7 +30,6 @@ function Navbar() {
   const pathname = usePathname();
   const menuRef = useRef(null);
   const [mounted, setMounted] = useState(false);
-
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -123,13 +121,13 @@ function Navbar() {
   };
 
   useEffect(() => {
-  setMounted(true);
-}, []);
+    setMounted(true);
+  }, []);
 
-if (!mounted) {
-  // Retourne un placeholder ou rien tant que le client n’est pas prêt
-  return null;
-}
+  if (!mounted) {
+    // Retourne un placeholder ou rien tant que le client n’est pas prêt
+    return null;
+  }
 
   const isHomePage = pathname === "/";
 
@@ -170,26 +168,35 @@ if (!mounted) {
               </div>
 
               <div className="lg:flex justify-between gap-8 items-center hidden ">
-                {menulists.map((list, index) => (
-                  <li key={index} className="capitalize list-none text-white">
-                    <CustomNavLinkList
-                      href={list.path}
-                      isActive={pathname === list.path}
-                      className={`${
-                        isScrolled || !isHomePage ? "text-black" : "text-white"
-                      }`}
-                    >
-                      {list.link}
-                    </CustomNavLinkList>
-                  </li>
-                ))}
+                {menulists
+                  .filter(
+                    (item) => item.path !== "/auth" && item.path !== "/formule"
+                  )
+                  .slice(0, 3)
+                  .map((list, index) => (
+                    <li key={index} className="capitalize list-none text-white">
+                      <CustomNavLinkList
+                        href={list.path}
+                        isActive={pathname === list.path}
+                        className={`${
+                          isScrolled || !isHomePage
+                            ? "text-black"
+                            : "text-white"
+                        }`}
+                      >
+                        {list.link}
+                      </CustomNavLinkList>
+                    </li>
+                  ))}
               </div>
             </div>
-            
 
             <div className="flex items-center gap-8 icons">
               <div className="hidden lg:flex lg:items-center lg:gap-8 ">
-                <ModernSearchOverlay isScrolled={isScrolled} isHomePage={isHomePage}/>
+                <ModernSearchOverlay
+                  isScrolled={isScrolled}
+                  isHomePage={isHomePage}
+                />
 
                 <CustomNavLink
                   href="/formule"
@@ -197,20 +204,18 @@ if (!mounted) {
                     isScrolled || !isHomePage ? "text-black" : "text-white"
                   }`}
                 >
-                  Composer sa formule
+                  Composer votre formule
                 </CustomNavLink>
 
                 <Link
-          href={isLoggedIn ? "#" : "/auth"}
-          onClick={handleAuthAction}
-           className={`${
+                  href={isLoggedIn ? "#" : "/auth"}
+                  onClick={handleAuthAction}
+                  className={`${
                     isScrolled || !isHomePage ? "text-black" : "text-white"
                   }`}
-        >
-          {isLoggedIn
-            ? "Déconnexion"
-            : "Connexion"}
-        </Link>
+                >
+                  {isLoggedIn ? "Déconnexion" : "Connexion"}
+                </Link>
               </div>
               <div className="relative">
                 <CustomNavLink href="/cart">
@@ -252,13 +257,11 @@ if (!mounted) {
               }`}
             >
               {menulists.map((list) => (
-                <Link href={list.path}><li
-                  href={list.path}
-                  key={list.id}
-                  className="uppercase list-none"
-                >
-                  <span className="text-white">{list.link}</span>
-                </li></Link>
+                <Link key={list.id} href={list.path}>
+                  <li href={list.path} className="uppercase list-none">
+                    <span className="text-white">{list.link}</span>
+                  </li>
+                </Link>
               ))}
             </div>
           </nav>

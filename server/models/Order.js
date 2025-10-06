@@ -151,7 +151,7 @@ orderSchema.index({ status: 1 });
 orderSchema.pre("save", async function (next) {
   if (this.isNew) {
     const count = await this.constructor.countDocuments();
-    this.orderNumber = `TUN-${Date.now()}-${(count + 1)
+    this.orderNumber = `ALG-${Date.now()}-${(count + 1)
       .toString()
       .padStart(4, "0")}`;
   }

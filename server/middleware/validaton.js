@@ -49,7 +49,7 @@ const schemas = {
     "any.required": "La description détaillée est obligatoire",
   }),
   
-  price: joi.number().positive().precision(2).required().messages({
+  price: joi.number().positive().precision(2).optional().messages({
     "number.positive": "Le prix doit être positif",
     "any.required": "Le prix est obligatoire",
   }),
@@ -60,7 +60,7 @@ const schemas = {
       'Hexabeads',
       'Hexaboost', 
       'Hexasol',
-      'Fertigel',
+      'Hexagel',
       'Actifert',
       'Hexaraw',
     )
@@ -141,7 +141,7 @@ const schemas = {
       'Hexabeads',
       'Hexaboost', 
       'Hexasol',
-      'Fertigel',
+      'Hexagel',
       'Actifert',
       'Hexaraw',
       )
@@ -208,7 +208,7 @@ const schemas = {
       'Hexabeads',
       'Hexaboost', 
       'Hexasol',
-      'Fertigel',
+      'Hexagel',
       'Actifert',
       'Hexaraw',
       )

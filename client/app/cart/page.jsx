@@ -156,15 +156,11 @@ function Cart(){
                   <th className="text-nowrap pb-6 md:px-4 px-1 text-gray-600 font-medium">
                     Détails des produits
                   </th>
-                  <th className="pb-6 md:px-4 px-1 text-gray-600 font-medium">
-                    Prix
-                  </th>
+                 
                   <th className="pb-6 md:px-4 px-1 text-gray-600 font-medium">
                     Quantité
                   </th>
-                  <th className="pb-6 md:px-4 px-1 text-gray-600 font-medium">
-                    Sous-total
-                  </th>
+                  
                 </tr>
               </thead>
               <tbody>
@@ -212,9 +208,7 @@ function Cart(){
                           </button>
                         </div>
                       </td>
-                      <td className="py-4 md:px-4 px-1 text-gray-600">
-                        DZD {product.price}
-                      </td>
+                      
                       <td className="py-4 md:px-4 px-1">
                         <div className="flex items-center md:gap-2 gap-1">
                           <button
@@ -245,9 +239,7 @@ function Cart(){
                           </button>
                         </div>
                       </td>
-                      <td className="py-4 md:px-4 px-1 text-gray-600">
-                        DZD {(product.price * cartItem.quantity).toFixed(2)}
-                      </td>
+                     
                     </tr>
                   );
                 })}

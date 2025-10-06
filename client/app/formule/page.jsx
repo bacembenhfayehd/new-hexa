@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Calculator,
   Leaf,
@@ -9,7 +9,12 @@ import {
   Trash2,
   User,
   MapPin,
+  CheckCircle,
+  AlertCircle,
+  Mail,
 } from "lucide-react";
+import emailjs from '@emailjs/browser';
+import { EMAILJS_CONFIG } from "@/lib/emailjs-config";
 
 export const Formuler = () => {
   const [composition, setComposition] = useState({
@@ -35,7 +40,7 @@ export const Formuler = () => {
     address: "",
     city: "",
     postalCode: "",
-    country: "France",
+    country: "",
   });
 
   const [deliveryInfo, setDeliveryInfo] = useState({
@@ -51,6 +56,15 @@ export const Formuler = () => {
   const [unit, setUnit] = useState("kg");
   const [packaging, setPackaging] = useState("");
   const [deliveryDate, setDeliveryDate] = useState("");
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+const [submitStatus, setSubmitStatus] = useState(null); // 'success', 'error', or null
+const [submitMessage, setSubmitMessage] = useState("");
+
+useEffect(() => {
+  // Initialize EmailJS
+  emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
+}, []);
 
   const handleCompositionChange = (element, value) => {
     const numValue = Number.parseFloat(value) || 0;
@@ -70,13 +84,13 @@ export const Formuler = () => {
     setAdditionalElements((prev) => [...prev, newElement]);
   };
 
-  const updateAdditionalElement = (id, value) => {
-    setAdditionalElements((prev) =>
-      prev.map((element) =>
-        element.id === id ? { ...element, [field]: value } : element
-      )
-    );
-  };
+  const updateAdditionalElement = (id, field, value) => {
+  setAdditionalElements((prev) =>
+    prev.map((element) =>
+      element.id === id ? { ...element, [field]: value } : element
+    )
+  );
+};
 
   const removeAdditionalElement = (id) => {
     setAdditionalElements((prev) =>
@@ -108,6 +122,146 @@ export const Formuler = () => {
   const handleDeliveryInfoChange = (field, value) => {
     setDeliveryInfo((prev) => ({ ...prev, [field]: value }));
   };
+
+
+  const handleSubmit = async (e) => {
+  if (e) e.preventDefault();
+  setIsSubmitting(true);
+  setSubmitStatus(null);
+
+  // Validate required fields
+  if (!userInfo.name || !userInfo.phone || !userInfo.email || !userInfo.address || !userInfo.city || !userInfo.postalCode) {
+    setSubmitStatus("error");
+    setSubmitMessage("Veuillez remplir tous les champs obligatoires (*)");
+    setIsSubmitting(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
+
+  if (!quantity) {
+    setSubmitStatus("error");
+    setSubmitMessage("Veuillez spécifier la quantité souhaitée");
+    setIsSubmitting(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
+
+  // Prepare email template parameters
+  const templateParams = {
+    // Client Information
+    client_name: userInfo.name,
+    client_company: userInfo.company || "N/A",
+    client_phone: userInfo.phone,
+    client_email: userInfo.email,
+    client_address: userInfo.address,
+    client_city: userInfo.city,
+    client_postal_code: userInfo.postalCode,
+    client_country: userInfo.country || "Algérie",
+    
+    // NPK Formula
+    npk_formula: generateFormula(),
+    nitrogen: composition.N,
+    phosphorus: composition.P,
+    potassium: composition.K,
+    calcium: composition.CaO,
+    magnesium: composition.MgO,
+    sulfur: composition.SO3,
+    
+    // Additional Elements
+    additional_elements: additionalElements.length > 0 
+      ? additionalElements.map(el => `${el.name}: ${el.value}${el.unit}`).join(", ")
+      : "Aucun",
+    
+    // Application Info
+    crop_type: cropType || "Non spécifié",
+    soil_type: soilType || "Non spécifié",
+    application_method: applicationMethod || "Non spécifié",
+    notes: notes || "Aucune note",
+    
+    // Quantity & Packaging
+    quantity: quantity,
+    unit: unit,
+    packaging: packaging || "Non spécifié",
+    delivery_date: deliveryDate || "Non spécifié",
+    
+    // Delivery Address
+    delivery_address: deliveryInfo.sameAsUserAddress 
+      ? `${userInfo.address}, ${userInfo.postalCode} ${userInfo.city}, ${userInfo.country || "Algérie"}`
+      : `${deliveryInfo.deliveryAddress}, ${deliveryInfo.deliveryPostalCode} ${deliveryInfo.deliveryCity}, ${deliveryInfo.deliveryCountry}`,
+    delivery_notes: deliveryInfo.deliveryNotes || "Aucune instruction",
+    
+    // Total composition
+    total_percentage: getTotalPercentage().toFixed(1),
+    
+    // Timestamp
+    submission_date: new Date().toLocaleString('fr-FR', {
+      timeZone: 'Africa/Tunis',
+      dateStyle: 'full',
+      timeStyle: 'short'
+    }),
+  };
+
+  try {
+    // Send email
+    const response = await emailjs.send(
+      EMAILJS_CONFIG.SERVICE_ID,
+      EMAILJS_CONFIG.TEMPLATE_ID,
+      templateParams
+    );
+    
+    console.log('Email sent successfully:', response);
+    setSubmitStatus("success");
+    setSubmitMessage("Votre demande a été envoyée avec succès! Nous vous contacterons bientôt.");
+    
+    // Optional: Reset form after 3 seconds
+    setTimeout(() => {
+      // Uncomment if you want to clear the form
+       resetForm();
+    }, 3000);
+    
+  } catch (error) {
+    console.error('Error sending email:', error);
+    setSubmitStatus("error");
+    setSubmitMessage("Une erreur s'est produite lors de l'envoi. Veuillez réessayer ou nous contacter directement.");
+  } finally {
+    setIsSubmitting(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+};
+
+// Optional: Reset form function
+const resetForm = () => {
+  setComposition({ N: 0, P: 0, K: 0, CaO: 0, MgO: 0, SO3: 0 });
+  setAdditionalElements([]);
+  setCropType("");
+  setApplicationMethod("");
+  setSoilType("");
+  setNotes("");
+  setUserInfo({
+    name: "",
+    company: "",
+    phone: "",
+    email: "",
+    address: "",
+    city: "",
+    postalCode: "",
+    country: "",
+  });
+  setDeliveryInfo({
+    deliveryAddress: "",
+    deliveryCity: "",
+    deliveryPostalCode: "",
+    deliveryCountry: "Algérie",
+    sameAsUserAddress: true,
+    deliveryNotes: "",
+  });
+  setQuantity("");
+  setUnit("kg");
+  setPackaging("");
+  setDeliveryDate("");
+  setSubmitStatus(null);
+  setSubmitMessage("");
+};
 
   return (
     <div className="fertilizer-composer ">
@@ -498,6 +652,90 @@ export const Formuler = () => {
           }
         }
 
+        .notification-banner {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  max-width: 500px;
+  width: 90%;
+  padding: 16px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: slideDown 0.3s ease-out;
+}
+
+.notification-success {
+  background: #5BBB7B;
+  color: white;
+}
+
+.notification-error {
+  background: #ef4444;
+  color: white;
+}
+
+.notification-close {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 24px;
+  padding: 0 4px;
+  line-height: 1;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.notification-close:hover {
+  opacity: 1;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.button-loading {
+  position: relative;
+}
+
+.button-loading::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 50%;
+  left: 50%;
+  margin-left: -8px;
+  margin-top: -8px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spinner 0.6s linear infinite;
+}
+
+@keyframes spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
         @media (max-width: 768px) {
           .fertilizer-composer {
             margin: 60px 16px 32px 16px; /* Adjusted margins for mobile */
@@ -520,6 +758,26 @@ export const Formuler = () => {
           }
         }
       `}</style>
+
+
+      {/* Notification Banner */}
+    {submitStatus && (
+      <div className={`notification-banner notification-${submitStatus}`}>
+        {submitStatus === "success" ? (
+          <CheckCircle className="h-6 w-6" />
+        ) : (
+          <AlertCircle className="h-6 w-6" />
+        )}
+        <span style={{ flex: 1 }}>{submitMessage}</span>
+        <button
+          onClick={() => setSubmitStatus(null)}
+          className="notification-close"
+          aria-label="Fermer"
+        >
+          ×
+        </button>
+      </div>
+    )}
 
       {/* <div className="header">
         <h1>
@@ -1191,12 +1449,31 @@ export const Formuler = () => {
           </div>
 
           <div className="button-group">
-            <button className="bg-green text-white rounded p-2">
-              Générer la fiche technique
-            </button>
-            {/* <button className="button button-outline">Calculer les coûts</button>*/}
-            <button className="border p-2 rounded">Exporter</button>
-          </div>
+  <button 
+    type="button"
+    className={`button button-primary ${isSubmitting ? 'button-loading' : ''}`}
+    onClick={handleSubmit}
+    disabled={isSubmitting}
+    style={{
+      background: isSubmitting ? "#9ca3af" : "#16a34a",
+      borderColor: isSubmitting ? "#9ca3af" : "#16a34a",
+      cursor: isSubmitting ? "not-allowed" : "pointer",
+      position: "relative",
+    }}
+  >
+    {!isSubmitting && <Mail className="h-4 w-4" />}
+    {isSubmitting ? "Envoi en cours..." : "Envoyer la demande"}
+  </button>
+  <button 
+    type="button"
+    className="button button-outline"
+    onClick={() => window.print()}
+    disabled={isSubmitting}
+  >
+    <Package className="h-4 w-4" />
+    Imprimer
+  </button>
+</div>
         </div>
       </div>
     </div>

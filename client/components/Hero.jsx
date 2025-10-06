@@ -54,10 +54,10 @@ function Hero (){
           <div className="w-full md:w-1/2 my-16 relative py-16">
             <Image src={header}  alt="" />
             <div className="horiz-move absolute md:top-28 top-8 left-0">
-              <Box title="Une preuve de qualité" desc="Lorem Ipsum Dolar Amet" />
+              <Box title="Une preuve de qualité" />
             </div>
             <div className="horiz-move absolute bottom-72 right-0">
-              <Box title="Sûr et sécurisé" desc="Lorem Ipsum Dolar Amet" />
+              <Box title="Sûr et sécurisé"  />
             </div>
 
             <div className="px-5 py-4 bg-white shadow-md flex items-center gap-5 rounded-xl ml-5 -mt-5 vert-move w-1/2">

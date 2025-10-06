@@ -401,22 +401,27 @@ const OrderSummary = ({ cartCount, cartItems }) => {
             <p className="uppercase text-gray-600">Articles</p>
             <p className="text-gray-800">{cartCount}</p>
           </div>
-          <div className="flex justify-between">
+
+        {/*  <div className="flex justify-between">
             <p className="text-gray-600">Sous-total</p>
             <p className="font-medium text-gray-800">DZD {total}</p>
           </div>
+
           <div className="flex justify-between">
             <p className="text-gray-600">Frais de livraison</p>
             {shippingCost === 0 ? "Gratuit" : `DT ${shippingCost}`}
           </div>
+
           <div className="flex justify-between">
             <p className="text-gray-600">Tax (2%)</p>
             <p className="font-medium text-gray-800">DZD {taxAmount}</p>
           </div>
+
           <div className="flex justify-between text-lg md:text-xl font-medium border-t pt-3">
             <p>Total</p>
             <p>DZD {finalTotal}</p>
           </div>
+*/}
         </div>
       </div>
 
@@ -429,7 +434,7 @@ const OrderSummary = ({ cartCount, cartItems }) => {
             : "bg-gray-400 cursor-not-allowed"
         }`}
       > 
-        {isCreatingOrder ? "Création en cours..." : "Passer la commande"}
+        {isCreatingOrder ? "Création en cours..." : "Demander un devis"}
       </button>
     </div>
   );

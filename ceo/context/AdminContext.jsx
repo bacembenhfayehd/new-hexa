@@ -14,11 +14,19 @@ export const AdminContextProvider = (props) => {
 
     const [users, setUsers] = useState([]);
     const [comments, setComments] = useState([]);
-  const [pagination, setPagination] = useState({});
+
   const [statistics, setStatistics] = useState({});
    const [cp, setCp] = useState({});
   const [cs, setCs] = useState({});
   const [loading, setLoading] = useState(true);
+  const [pagination, setPagination] = useState({
+  currentPage: 1,
+  totalPages: 1,
+  totalUsers: 0,
+  limit: 10,
+  hasNextPage: false,
+  hasPrevPage: false
+});
 
 
   const createProduct = async (productData, imageFiles) => {
@@ -137,7 +145,7 @@ export const AdminContextProvider = (props) => {
     }
   };
 
-   const fetchUsers = async ({ page = 1, limit = 10, search = "", sortBy = "createdAt", sortOrder = "desc" } = {}) => {
+   const fetchUsers = async (page = 1, limit = 10, search = "", sortBy = "createdAt", sortOrder = "desc") => {
     try {
       setLoading(true);
       const res = await axios.get("http://localhost:5000/api/admin/users", {
@@ -256,6 +264,33 @@ const updateOrderStatus = async (orderId, newStatus) => {
   }
 };
 
+const exportUsers = async () => {
+  try {
+    setLoading(true);
+    
+    const response = await axios.get('http://localhost:5000/api/admin/users/export', {
+      responseType: 'blob' // Important: tells axios to handle binary data
+    });
+
+    // Create a download link
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `utilisateurs-${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    // Cleanup
+    link.parentNode.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  
+  } catch (error) {
+    console.error('Error exporting users:', error);
+   
+  } finally {
+    setLoading(false);
+  }
+};
+
    useEffect(() => {
     fetchUsers();
     fetchComments()
@@ -266,8 +301,8 @@ const updateOrderStatus = async (orderId, newStatus) => {
     createProduct,
     getAllProducts,
     getAllOrders,
-    updateProduct,fetchUsers,pagination,statistics,users,loading,fetchComments,comments,cp,cs,deleteComment,deleteUser,updateOrderStatus
-  };
+    updateProduct,fetchUsers,exportUsers,pagination,statistics,users,loading,fetchComments,comments,cp,cs,deleteComment,deleteUser,updateOrderStatus,pagination
+  }
 
   return (
     <AdminContext.Provider value={value}>

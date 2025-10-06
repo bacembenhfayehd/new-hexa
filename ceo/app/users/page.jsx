@@ -1,27 +1,27 @@
 'use client'
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Search, Filter, MoreVertical, Mail, Phone, MapPin, Calendar, ShoppingBag, Eye, Edit, Trash2, UserCheck, UserX } from 'lucide-react';
 import { AdminContext } from '@/context/AdminContext';
 
 import toast from 'react-hot-toast'; // AJOUT: Import de toast
 
 const UsersPage = () => {
-  const {users, statistics, loading, deleteUser, fetchUsers} = useContext(AdminContext)
+  const {users, statistics, loading, deleteUser, fetchUsers,pagination,exportUsers} = useContext(AdminContext)
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+const [limit] = useState(10);
 
-  const filteredUsers = users.filter(user => {
-    const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         user.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = 
-  selectedFilter === 'all' || 
-  (selectedFilter === 'bloqués' ? !user.isActive : user.isActive);
-    return matchesSearch && matchesFilter;
-  });
+const filteredUsers = users.filter(user => {
+  const matchesFilter = 
+    selectedFilter === 'all' || 
+    (selectedFilter === 'bloqués' ? !user.isActive : user.isActive);
+  return matchesFilter;
+});
 
   const handleSelectUser = (userId) => {
     setSelectedUsers(prev => 
@@ -85,6 +85,29 @@ const UsersPage = () => {
       }
     }
   };
+
+  // ADD these handler functions before the return statement:
+const handlePageChange = (newPage) => {
+  setCurrentPage(newPage);
+  fetchUsers(newPage, limit, searchTerm);
+};
+
+const handlePrevPage = () => {
+  if (pagination.hasPrevPage) {
+    handlePageChange(currentPage - 1);
+  }
+};
+
+const handleNextPage = () => {
+  if (pagination.hasNextPage) {
+    handlePageChange(currentPage + 1);
+  }
+};
+
+useEffect(() => {
+  fetchUsers(currentPage, limit, searchTerm);
+}, [currentPage, searchTerm]);
+  
 
   return (
 
@@ -157,14 +180,19 @@ const UsersPage = () => {
                 >
                   <option value="all">Tous</option>
                   <option value="bloqués">Bloqués</option>
+                  <option value="actids">Actifs</option>
                 </select>
               </div>
             </div>
 
             <div className="flex gap-3">
-              <button className="px-4 py-2 text-gray-600 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors">
-                Export
-              </button>
+              <button 
+  onClick={exportUsers}
+  disabled={loading}
+  className="px-4 py-2 text-gray-600 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+>
+  {loading ? 'Export...' : 'Export'}
+</button>
             </div>
           </div>
         </div>
@@ -283,30 +311,45 @@ const UsersPage = () => {
           </div>
           
           <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
-            <div className="flex items-center justify-between">
-              <div className="text-sm text-gray-600">
-                Showing <span className="font-medium">1</span> to <span className="font-medium">{filteredUsers.length}</span> of{' '}
-                <span className="font-medium">{filteredUsers.length}</span> results
-              </div>
-              <div className="flex items-center space-x-2">
-                <button className="px-3 py-1 text-sm border border-gray-200 rounded hover:bg-white transition-colors">
-                  Previous
-                </button>
-                <button className="px-3 py-1 text-sm bg-green-700 text-white rounded hover:bg-green-800 transition-colors">
-                  1
-                </button>
-                <button className="px-3 py-1 text-sm border border-gray-200 rounded hover:bg-white transition-colors">
-                  2
-                </button>
-                <button className="px-3 py-1 text-sm border border-gray-200 rounded hover:bg-white transition-colors">
-                  3
-                </button>
-                <button className="px-3 py-1 text-sm border border-gray-200 rounded hover:bg-white transition-colors">
-                  Next
-                </button>
-              </div>
-            </div>
-          </div>
+  <div className="flex items-center justify-between">
+    <div className="text-sm text-gray-600">
+      Showing <span className="font-medium">{((currentPage - 1) * limit) + 1}</span> to{' '}
+      <span className="font-medium">{Math.min(currentPage * limit, pagination.totalUsers)}</span> of{' '}
+      <span className="font-medium">{pagination.totalUsers}</span> results
+    </div>
+    <div className="flex items-center space-x-2">
+      <button 
+        onClick={handlePrevPage}
+        disabled={!pagination.hasPrevPage}
+        className="px-3 py-1 text-sm border border-gray-200 rounded hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        Previous
+      </button>
+      
+      {[...Array(pagination.totalPages)].map((_, idx) => (
+        <button
+          key={idx + 1}
+          onClick={() => handlePageChange(idx + 1)}
+          className={`px-3 py-1 text-sm rounded transition-colors ${
+            currentPage === idx + 1
+              ? 'bg-green-700 text-white'
+              : 'border border-gray-200 hover:bg-white'
+          }`}
+        >
+          {idx + 1}
+        </button>
+      ))}
+      
+      <button 
+        onClick={handleNextPage}
+        disabled={!pagination.hasNextPage}
+        className="px-3 py-1 text-sm border border-gray-200 rounded hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        Next
+      </button>
+    </div>
+  </div>
+</div>
         </div>
       </div>
 

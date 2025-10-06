@@ -14,8 +14,6 @@ export const orderConfirmationTemplate = (order, userName) => {
     <tr>
       <td class="item-name">${item.name}</td>
       <td class="item-quantity">${item.quantity}</td>
-      <td class="item-price">${item.price.toFixed(3)} TND</td>
-      <td class="item-subtotal">${item.subtotal.toFixed(3)} TND</td>
     </tr>
   `).join('');
 
@@ -397,8 +395,7 @@ export const orderConfirmationTemplate = (order, userName) => {
                 <tr>
                   <th>Article</th>
                   <th>Qté</th>
-                  <th>Prix unit.</th>
-                  <th>Sous-total</th>
+                  
                 </tr>
               </thead>
               <tbody>
@@ -407,20 +404,6 @@ export const orderConfirmationTemplate = (order, userName) => {
             </table>
           </div>
 
-          <!-- Total Section -->
-          <div class="total-section">
-            <div class="total-content">
-              ${order.shippingCost > 0 ? `
-                <div class="shipping-cost">
-                  <span>Frais de livraison : </span>
-                  <span>${order.shippingCost.toFixed(3)} TND</span>
-                </div>
-              ` : ''}
-              <div class="total-amount">
-                <span>Total : ${order.totalAmount.toFixed(3)} TND</span>
-              </div>
-            </div>
-          </div>
 
           <!-- Notes -->
           ${order.notes ? `
@@ -495,9 +478,8 @@ Téléphone : ${order.phone}
 ${addressText}
 ARTICLES COMMANDÉS :
 ${itemsList}
-${order.shippingCost > 0 ? `\nFrais de livraison : ${order.shippingCost.toFixed(3)} TND` : ''}
 
-TOTAL : ${order.totalAmount.toFixed(3)} TND
+
 
 ${order.notes ? `Notes : ${order.notes}\n` : ''}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
