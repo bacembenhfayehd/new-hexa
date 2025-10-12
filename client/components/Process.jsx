@@ -1,7 +1,8 @@
 import { Container, Heading, Title } from "@/app/common/Design";
 import { processList } from "@/assets/data";
+import Image from "next/image";
 
-function Process () {
+function Process() {
   return (
     <>
       <section className="process py-24 bg-primary relative">
@@ -19,7 +20,14 @@ function Process () {
                 className="p-8 bg-[rgba(38,90,77,0.62)] rounded-xl flex items-center justify-center flex-col text-center"
               >
                 <div className="w-16 h-16">
-                  <img src={item.cover} alt="" />
+                  <Image
+                    src={item.cover}
+                    
+                    width={64}
+                    height={64}
+                    loading="lazy"
+                    className="object-contain"
+                  />
                 </div>
                 <Title level={5} className="my-3 font-normal text-white">
                   {item.title}
@@ -33,7 +41,6 @@ function Process () {
       </section>
     </>
   );
-};
+}
 
-
-export default Process
+export default Process;

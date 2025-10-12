@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import emailjs from '@emailjs/browser';
 import { EMAILJS_CONFIG } from "@/lib/emailjs-config";
+import { PDFDocument } from "@/components/PDFDocument";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 
 export const Formuler = () => {
   const [composition, setComposition] = useState({
@@ -60,6 +62,12 @@ export const Formuler = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 const [submitStatus, setSubmitStatus] = useState(null); // 'success', 'error', or null
 const [submitMessage, setSubmitMessage] = useState("");
+
+const [isClient, setIsClient] = useState(false);
+
+useEffect(() => {
+  setIsClient(true);
+}, []);
 
 useEffect(() => {
   // Initialize EmailJS
@@ -779,13 +787,7 @@ const resetForm = () => {
       </div>
     )}
 
-      {/* <div className="header">
-        <h1>
-          <Leaf className="h-8 w-8" />
-          Composez votre engrais sur mesure
-        </h1>
-        <p>Créez une formulation personnalisée adaptée à vos besoins agricoles</p>
-      </div>*/}
+
 
       <div className="grid grid-3">
         {/* Informations utilisateur */}
@@ -1448,7 +1450,7 @@ const resetForm = () => {
             </div>
           </div>
 
-          <div className="button-group">
+         <div className="button-group" style={{ display: 'flex', gap: '12px', marginTop: '32px' }}>
   <button 
     type="button"
     className={`button button-primary ${isSubmitting ? 'button-loading' : ''}`}
@@ -1459,20 +1461,82 @@ const resetForm = () => {
       borderColor: isSubmitting ? "#9ca3af" : "#16a34a",
       cursor: isSubmitting ? "not-allowed" : "pointer",
       position: "relative",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: "8px",
+      flex: '1', // Prend 50% de la largeur
+      minWidth: '0', // Permet au bouton de rétrécir
     }}
   >
     {!isSubmitting && <Mail className="h-4 w-4" />}
-    {isSubmitting ? "Envoi en cours..." : "Envoyer la demande"}
+    <span style={{ whiteSpace: 'nowrap' }}>{isSubmitting ? "Envoi en cours..." : "Envoyer la demande"}</span>
   </button>
-  <button 
-    type="button"
-    className="button button-outline"
-    onClick={() => window.print()}
-    disabled={isSubmitting}
-  >
-    <Package className="h-4 w-4" />
-    Imprimer
-  </button>
+
+  {isClient ? (
+    <PDFDownloadLink
+      document={
+        <PDFDocument
+          composition={composition}
+          userInfo={userInfo}
+          deliveryInfo={deliveryInfo}
+          cropType={cropType}
+          soilType={soilType}
+          applicationMethod={applicationMethod}
+          notes={notes}
+          quantity={quantity}
+          unit={unit}
+          packaging={packaging}
+          deliveryDate={deliveryDate}
+          additionalElements={additionalElements}
+        />
+      }
+      fileName={`formulation-${userInfo.name || 'engrais'}-${new Date().toISOString().split('T')[0]}.pdf`}
+      style={{ 
+        textDecoration: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '8px',
+        padding: '10px 16px',
+        border: '1px solid #d1d5db',
+        borderRadius: '8px',
+        fontSize: '0.875rem',
+        fontWeight: '500',
+        cursor: 'pointer',
+        transition: 'all 0.2s',
+        background: 'white',
+        color: '#374151',
+        flex: '1', // Prend 50% de la largeur
+        minWidth: '0',
+      }}
+    >
+      {({ loading }) => (
+        <>
+          <Package className="h-4 w-4" />
+          <span style={{ whiteSpace: 'nowrap' }}>{loading ? 'Génération...' : 'Télécharger PDF'}</span>
+        </>
+      )}
+    </PDFDownloadLink>
+  ) : (
+    <button 
+      className="button button-outline" 
+      disabled
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '8px',
+        opacity: '0.6',
+        cursor: 'not-allowed',
+        flex: '1', // Prend 50% de la largeur
+        minWidth: '0',
+      }}
+    >
+      <Package className="h-4 w-4" />
+      <span style={{ whiteSpace: 'nowrap' }}>Chargement...</span>
+    </button>
+  )}
 </div>
         </div>
       </div>
