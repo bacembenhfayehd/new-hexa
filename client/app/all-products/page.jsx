@@ -1,11 +1,12 @@
 'use client'
 import ProductCard from "@/components/ProductCard";
-import { AppContext, useAppContext } from "@/context/AppContext";
-import { useContext, useEffect, useState } from "react";
+import { useAppContext } from "@/context/AppContext";
+import {  useEffect, useState } from "react";
 import { ChevronDown, Filter, X } from "lucide-react";
+import toast from "react-hot-toast";
 
 const AllProducts = () => {
-      const { getAllProducts, router } = useAppContext()
+      const { getAllProducts} = useAppContext()
       const [products, setProducts] = useState([]);
       const [filteredProducts, setFilteredProducts] = useState([]);
       const [loading, setLoading] = useState(true);
