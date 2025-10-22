@@ -296,6 +296,7 @@ useEffect(() => {
                           onClick={() => handleDeleteUser(user.id)} 
                           className="p-2 text-gray-400 hover:text-green-700 hover:bg-green-50 rounded-lg transition-colors"
                           disabled={isDeleting}
+                          data-testid={`delete-button-${user.id}`}
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>

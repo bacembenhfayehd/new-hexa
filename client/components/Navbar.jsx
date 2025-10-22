@@ -18,6 +18,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useAppContext } from "@/context/AppContext";
 import ModernSearchOverlay from "./ModernSearchOverlay";
+import AboutModal from "./AboutModal";
 
 export const User1 = "https://cdn-icons-png.flaticon.com/128/236/236832.png";
 
@@ -316,8 +317,11 @@ function Navbar() {
                     }`}
                   >
                     {list.link}
+                    
                   </Link>
                 ))}
+                
+                
 
               {/* Divider */}
               <div className="border-t border-gray-200 my-4"></div>

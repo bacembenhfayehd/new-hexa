@@ -22,7 +22,7 @@ function Process() {
                 <div className="w-16 h-16">
                   <Image
                     src={item.cover}
-                    
+                    alt={item.title}
                     width={64}
                     height={64}
                     loading="lazy"

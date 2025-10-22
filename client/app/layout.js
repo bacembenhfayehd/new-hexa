@@ -9,19 +9,17 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+         <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
         <link
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded&display=swap"
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded"
-        />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,1,0,0&icon_names=chat_bubble"
         />
       </head>
       <body>
           <AppContextProvider>
             <Toaster />
-            {children}
+            <main>{children}</main>
           <ClientWrapper />
            </AppContextProvider>
      

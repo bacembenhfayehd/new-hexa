@@ -3,10 +3,15 @@
 import Loading from "@/components/Loading";
 import { useAppContext } from "@/context/AppContext";
 import { useRouter } from "next/navigation";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const LoginSignup = () => {
+  const [isClient, setIsClient] = useState(false);
+
+useEffect(() => {
+  setIsClient(true);
+}, []);
   const {syncCartAfterLogin,processPendingOrders} = useAppContext() ;
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -15,6 +20,8 @@ const LoginSignup = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+
+  
 
 
 
@@ -74,10 +81,9 @@ useEffect(() => {
   }
 }, [processPendingOrders]);
 
-  if (loading) {
-    return <Loading />;
-  }
-
+ if (!isClient || loading) {
+  return <Loading />;
+}
   return (
     <div className=" h-screen flex items-center">
       <form className="w-64 mx-auto mb-12" onSubmit={handleSubmit}>
@@ -86,6 +92,7 @@ useEffect(() => {
         {loggingOrregister === "register" ? (
           <>
             <input
+            name="username"
               value={username}
               onChange={(ev) => setUsername(ev.target.value)}
               type="text"
@@ -94,6 +101,7 @@ useEffect(() => {
             />
             <input
               value={email}
+              name="email"
               onChange={(ev) => setEmail(ev.target.value)}
               type="email"
               className="block w-full rounded-sm p-2 mb-2 border"
@@ -101,6 +109,7 @@ useEffect(() => {
             />
             <input
               value={password}
+              name="password"
               onChange={(ev) => setPassword(ev.target.value)}
               type="password"
               className="block w-full rounded-sm p-2 mb-2 border"
@@ -110,6 +119,7 @@ useEffect(() => {
         ) : (
           <>
             <input
+            name="email"
               value={email}
               onChange={(ev) => setEmail(ev.target.value)}
               type="email"
@@ -118,6 +128,7 @@ useEffect(() => {
             />
             <input
               value={password}
+              name="password"
               onChange={(ev) => setPassword(ev.target.value)}
               type="password"
               className="block w-full rounded-sm p-2 mb-2 border"
@@ -125,33 +136,37 @@ useEffect(() => {
             />
           </>
         )}
-        <button className="bg-green-700 text-white w-full block rounded-sm p-2">
+        <button type="submit"  className="bg-green-700 text-white w-full block rounded-sm p-2">
           {loggingOrregister === "register" ? `S'inscrire` : "Se connecter"}
         </button>
         <div className="mt-2 text-center">
-          {loggingOrregister === "register" && (
-            <div>
-              Déjà un compte ?
-              <button
-                className="text-green-700 cursor-pointer"
-                onClick={() => setLoggingOrRegister("login")}
-              >
-                Connectez-vous
-              </button>
-            </div>
-          )}
-          {loggingOrregister === "login" && (
-            <div>
-              Pas de compte ?
-              <button
-                className="text-green-700 cursor-pointer"
-                onClick={() => setLoggingOrRegister("register")}
-              >
-                Inscrivez-vous
-              </button>
-            </div>
-          )}
-        </div>
+  {loggingOrregister === "register" && (
+    <div>
+      Déjà un compte ?
+      <button
+        type="button" 
+        data-testid="switch-to-login"
+        className="text-green-700 cursor-pointer ml-1"
+        onClick={() => setLoggingOrRegister("login")}
+      >
+        Connectez-vous
+      </button>
+    </div>
+  )}
+  {loggingOrregister === "login" && (
+    <div>
+      Pas de compte ?
+      <button
+        type="button" 
+        data-testid="switch-to-register"
+        className="text-green-700 cursor-pointer ml-1"
+        onClick={() => setLoggingOrRegister("register")}
+      >
+        Inscrivez-vous
+      </button>
+    </div>
+  )}
+</div>
       </form>
     </div>
   );
@@ -159,63 +174,3 @@ useEffect(() => {
 
 export default LoginSignup;
 
-/*import { useContext, useState } from "react";
-import axios from "axios";
-import { UserContext } from "./Usercontext";
-
-
-export default function RegisterLogin() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const[loggingOrregister,setLoggingOrRegister] = useState('register')
-  const {setUsername:setLoggedinUsername,setId} = useContext(UserContext)
-
-  async function register(ev) {
-    ev.preventDefault();
-    const url = loggingOrregister === 'register' ? 'http://localhost:4040/register' : 'http://localhost:4040/login'
-      const {data} = await axios.post(url, { username, password });
-      setLoggedinUsername(username);
-      setId(data.id)
-   
-  }
-
-  return (
-    <div className="bg-blue-50 h-screen flex items-center">
-      <form className="w-64 mx-auto mb-12" onSubmit={register}>
-        <input
-          value={username}
-          onChange={(ev) => setUsername(ev.target.value)}
-          type="text"
-          className=" block w-full rounded-sm p-2 mb-2 border"
-          placeholder="username"
-        />
-        <input
-          value={password}
-          onChange={(ev) => setPassword(ev.target.value)}
-          type="password"
-          className="block w-full rounded-sm p-2 mb-2 border"
-          placeholder="password"
-        />
-        <button className="bg-blue-500 text-white w-full block rounded-sm p-2">
-          {loggingOrregister === 'register' ? 'Register' : 'Login'}
-        </button>
-        <div className="mt-2 text-center">
-          {loggingOrregister === 'register' && (
-            <div>
-              Already a member?
-             <button onClick={() => setLoggingOrRegister('login')}>Login here</button>
-              </div>
-          )}
-          {loggingOrregister === 'login' && (
-            <div>
-              Dont have an acoount?
-             <button onClick={() => setLoggingOrRegister('register')} >Register</button>
-             
-              </div>
-          )}
-         </div>
-      </form>
-    </div>
-  );
-}
-*/

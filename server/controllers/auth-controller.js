@@ -51,7 +51,7 @@ const login = async (req, res, next) => {
 // Logout user
 const logout = async (req, res, next) => {
   try {
-    const { userId } = req.body;
+    const { userId } = req.user._id;
     
     // Supprimer le refreshToken de la base de données
     await authService.logout(userId);

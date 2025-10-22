@@ -211,7 +211,7 @@ const OrderSummary = ({ cartCount, cartItems }) => {
   );
 
   return (
-    <div className="w-full md:w-96 bg-gray-500/5 p-5">
+    <div className="w-full md:w-96 bg-gray-500/5 p-5 " data-testid="order-summary">
       <h2 className="text-xl md:text-2xl font-medium text-gray-700">
         Détails de la commande
       </h2>

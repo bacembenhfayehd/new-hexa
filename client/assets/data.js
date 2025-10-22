@@ -5,11 +5,18 @@ import Fertibeads from "./images/category/Fertibeads.png";
 import Fertisol from "./images/category/Fertisol.png";
 import Fertiraw from "./images/category/Fertiraw.png";
 
+import kf from '../assets/images/common/kf.jpeg'
+import sarl from '../assets/images/common/sarl.jpeg'
+import safko from '../assets/images/common/safko.jpeg'
+import kakso from '../assets/images/common/sasko.jpeg'
+import hipo from '../assets/images/common/hippo.jpeg'
+import aqua from '../assets/images/common/aqua.jpeg'
+
 
 export const menulists = [
   { id: 1, path: "/", link: "accueil" },
-  { id: 2, path: "/all-products", link: "produit" },
-  { id: 3, path: "/about", link: "à propos" },
+  { id: 2, path: "/all-products", link: "produits" },
+ 
   { id: 4, path: "/auth", link: "connexion" },
   { id: 5, path: "/formule", link: "votre formule" },
 ];
@@ -154,60 +161,32 @@ export const topSellerList = [
 export const trustList = [
   {
     id: 1,
-    profile: "https://bidout-react.vercel.app/images/bg/sponsor1.png",
+    profile: kf,
   },
   {
     id: 2,
-    profile: "https://bidout-react.vercel.app/images/bg/sponsor3.png",
+    profile: sarl,
   },
+  
   {
     id: 3,
-    profile: "https://bidout-react.vercel.app/images/bg/sponsor2.png",
+    profile: safko,
   },
   {
     id: 4,
-    profile: "https://bidout-react.vercel.app/images/bg/sponsor4.png",
+    profile: aqua,
   },
   {
     id: 5,
-    profile: "https://bidout-react.vercel.app/images/bg/sponsor5.png",
+    profile: kakso,
   },
   {
     id: 6,
-    profile: "https://bidout-react.vercel.app/images/bg/sponsor6.png",
+    profile: hipo
   },
-  {
-    id: 7,
-    profile: "https://bidout-react.vercel.app/images/bg/sponsor7.png",
-  },
-  {
-    id: 8,
-    profile: "https://bidout-react.vercel.app/images/bg/sponsor8.png",
-  },
-  {
-    id: 9,
-    profile: "https://bidout-react.vercel.app/images/bg/sponsor9.png",
-  },
-  {
-    id: 10,
-    profile: "https://bidout-react.vercel.app/images/bg/sponsor1.png",
-  },
-  {
-    id: 4,
-    profile: "https://bidout-react.vercel.app/images/bg/sponsor3.png",
-  },
-  {
-    id: 5,
-    profile: "https://bidout-react.vercel.app/images/bg/sponsor8.png",
-  },
-  {
-    id: 6,
-    profile: "https://bidout-react.vercel.app/images/bg/sponsor1.png",
-  },
-  {
-    id: 7,
-    profile: "https://bidout-react.vercel.app/images/bg/sponsor9.png",
-  },
+ 
+  
+ 
 ];
 
 export const topList = [

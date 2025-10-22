@@ -17,7 +17,7 @@ function Product() {
   const [mainImage, setMainImage] = useState(null);
   const [productData, setProductData] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  
 
   const { id } = useParams();
 
@@ -113,6 +113,7 @@ function Product() {
                         src={image.url}
                         alt={image.alt || `Image ${index + 1}`}
                         fill
+                        loading="lazy"
                         className="object-cover transition-transform duration-300"
                         sizes="(max-width: 640px) 64px, (max-width: 1024px) 80px, 96px"
                       />

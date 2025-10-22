@@ -3,7 +3,7 @@ import cors from 'cors'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
 //import morgan from 'morgan'
-import rateLimit from 'express-rate-limit'
+
 
 import authRoutes from './routes/authRoutes.js'
 import orderRoutes from './routes/orderRoutes.js'
@@ -13,6 +13,7 @@ import userRoutes from './routes/userRoutes.js'
 import errorHandler from './middleware/errorHandler.js'
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { authLimiter, generalLimiter } from './middleware/rateLimiter.js'
 
 
 
@@ -39,15 +40,6 @@ app.use(cors({
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
-// Appliquer le rate limiter seulement en production
-if (process.env.NODE_ENV === 'production') {
-  const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, 
-    max: 100 
-  });
-  
-  app.use('/api', limiter);
-}
 
 
 
@@ -59,7 +51,8 @@ if (process.env.NODE_ENV === 'production') {
 
 // Routes
 //app.use('/api/user', userRoutes);
-app.use('/api/auth', authRoutes);
+app.use('/api',generalLimiter)
+app.use('/api/auth', authRoutes,authLimiter);
 app.use('/api/order', orderRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/cart', cartRoutes);
