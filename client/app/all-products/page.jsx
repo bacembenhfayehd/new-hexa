@@ -49,7 +49,7 @@ const AllProducts = () => {
     return (
         <>
             
-            <div className="flex flex-col items-start px-6 md:px-16 lg:px-32 pt-20">
+            <div className="flex flex-col items-start px-4 md:px-16 lg:px-32 pt-20 overflow-hidden">
                 <div className="flex flex-col items-end pt-12">
                     <p className="text-2xl font-medium">Tous les produits</p>
                     <div className="w-32 h-0.5 bg-green-600 rounded-full "></div>
@@ -135,7 +135,7 @@ const AllProducts = () => {
                 </div>
 
                 {/* Products Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 flex-col items-center gap-6 mt-4 pb-14 w-full">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6 mt-4 pb-14 w-full overflow-hidden">
                     {loading ? (
                       // Loading skeleton
                       Array.from({ length: 8 }).map((_, index) => (

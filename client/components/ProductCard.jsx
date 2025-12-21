@@ -37,7 +37,7 @@ function ProductCard({ product }) {
   return (
     <>
       {/* Card compacte avec hover effect moderne */}
-      <div className="group bg-white rounded-lg p-3 hover:shadow-lg hover:shadow-green-500/10 transition-all duration-300 hover:-translate-y-1">
+      <div className="group bg-white rounded-lg p-3 hover:shadow-lg hover:shadow-green-500/10 transition-all duration-300 hover:-translate-y-1 flex flex-col min-w-0 overflow-hidden">
         {/* Container image compact */}
         <div
           onClick={() => {
@@ -70,19 +70,19 @@ function ProductCard({ product }) {
         </div>
 
         {/* Contenu simplifié */}
-        <div className="space-y-3">
-          <div>
+        <div className="space-y-3 min-w-0">
+          <div className="min-w-0 w-full">
             <Title
               level={6}
-              className="uppercase text-sm font-medium text-gray-900 group-hover:text-green-600 transition-colors duration-300"
+               className="uppercase text-sm font-medium text-gray-900 group-hover:text-green-600 transition-colors duration-300 truncate w-full block"
             >
               {product.name}
             </Title>
           </div>
 
           {/* Bouton unique centré */}
-          <div className="pt-1 ">
-            <PrimaryButton onClick={() => handleAddToCart(product._id)} className="w-full rounded-lg py-2 text-sm font-medium transition-all cursor-pointer duration-300 hover:scale-105">
+          <div className="pt-1 w-full min-w-0">
+            <PrimaryButton onClick={() => handleAddToCart(product._id)} className="w-full rounded-lg py-2 text-sm font-medium transition-all cursor-pointer duration-300 hover:scale-105 min-w-0 whitespace-nowrap flex items-center justify-center">
               Panier
             </PrimaryButton>
           </div>
