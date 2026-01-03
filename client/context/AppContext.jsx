@@ -45,7 +45,7 @@ const [isSubmitted, setIsSubmitted] = useState(false);
       if (!token) return;
 
       setLoading(true);
-      const response = await fetch("http://api.hexagrow-indus.com/api/cart/", {
+      const response = await fetch("https://api.hexagrow-indus.com/api/cart/", {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -90,7 +90,7 @@ const [isSubmitted, setIsSubmitted] = useState(false);
       if (filters.sortBy) params.append("sortBy", filters.sortBy);
       if (filters.sortOrder) params.append("sortOrder", filters.sortOrder);
 
-      const url = `http://api.hexagrow-indus.com/api/admin/products${
+      const url = `https://api.hexagrow-indus.com/api/admin/products${
         params.toString() ? "?" + params.toString() : ""
       }`;
 
@@ -122,7 +122,7 @@ const [isSubmitted, setIsSubmitted] = useState(false);
 
       setLoading(true);
 
-      const response = await fetch("http://api.hexagrow-indus.com/api/cart/add", {
+      const response = await fetch("https://api.hexagrow-indus.com/api/cart/add", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -192,7 +192,7 @@ const [isSubmitted, setIsSubmitted] = useState(false);
       setLoading(true);
 
       const response = await fetch(
-        `http://api.hexagrow-indus.com/api/cart/item/${productId}`,
+        `https://api.hexagrow-indus.com/api/cart/item/${productId}`,
         {
           method: "PATCH",
           headers: {
@@ -254,7 +254,7 @@ const [isSubmitted, setIsSubmitted] = useState(false);
       setLoading(true);
 
       const response = await fetch(
-        `http://api.hexagrow-indus.com/api/cart/item/${productId}`,
+        `https://api.hexagrow-indus.com/api/cart/item/${productId}`,
         {
           method: "DELETE",
           headers: {
@@ -324,7 +324,7 @@ const [isSubmitted, setIsSubmitted] = useState(false);
         return removeFromLocalCart(productId);
       }
       const response = await fetch(
-        `http://api.hexagrow-indus.com/api/cart/remove/${productId}`,
+        `https://api.hexagrow-indus.com/api/cart/remove/${productId}`,
         {
           method: "DELETE",
           headers: {
@@ -387,7 +387,7 @@ const [isSubmitted, setIsSubmitted] = useState(false);
       // Process all pending orders
       const results = await Promise.allSettled(
         tempOrders.map(async (tempOrder) => {
-          const response = await fetch("http://api.hexagrow-indus.com/api/order/", {
+          const response = await fetch("https://api.hexagrow-indus.com/api/order/", {
             method: "POST",
             headers: {
               Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
@@ -508,7 +508,7 @@ const [isSubmitted, setIsSubmitted] = useState(false);
 
         setLoading(true);
 
-        const response = await fetch("http://api.hexagrow-indus.com/api/order/", {
+        const response = await fetch("https://api.hexagrow-indus.com/api/order/", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -549,7 +549,7 @@ const [isSubmitted, setIsSubmitted] = useState(false);
         return clearLocalCart();
       }
 
-      const response = await fetch("http://api.hexagrow-indus.com/api/cart/clear", {
+      const response = await fetch("https://api.hexagrow-indus.com/api/cart/clear", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -599,7 +599,7 @@ const [isSubmitted, setIsSubmitted] = useState(false);
       if (!token) return;
 
       // Récupérer le panier serveur actuel
-      const serverCartResponse = await fetch("http://api.hexagrow-indus.com/api/cart", {
+      const serverCartResponse = await fetch("https://api.hexagrow-indus.com/api/cart", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const serverCart = await serverCartResponse.json();
@@ -619,7 +619,7 @@ const [isSubmitted, setIsSubmitted] = useState(false);
   const getProductComments = async (productId) => {
     try {
       const response = await fetch(
-        `http://api.hexagrow-indus.com/api/admin/product/${productId}`,
+        `https://api.hexagrow-indus.com/api/admin/product/${productId}`,
         {
           method: "GET",
           headers: {
@@ -647,7 +647,7 @@ const [isSubmitted, setIsSubmitted] = useState(false);
       if (!token) {
         throw new Error("Veuillez vous connecter pour laisser un avis");
       }
-      const response = await fetch("http://api.hexagrow-indus.com/api/user/comment", {
+      const response = await fetch("https://api.hexagrow-indus.com/api/user/comment", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -675,7 +675,7 @@ const [isSubmitted, setIsSubmitted] = useState(false);
   const fetchProfile = async () => {
     try {
       const token = localStorage.getItem("auth-token");
-      const response = await fetch("http://api.hexagrow-indus.com/api/user/profile", {
+      const response = await fetch("https://api.hexagrow-indus.com/api/user/profile", {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -697,7 +697,7 @@ const [isSubmitted, setIsSubmitted] = useState(false);
   const updateProfile = async (updateData) => {
     try {
       const token = localStorage.getItem("auth-token");
-      const response = await fetch("http://api.hexagrow-indus.com/api/user/", {
+      const response = await fetch("https://api.hexagrow-indus.com/api/user/", {
         method: "PUT", // ou 'PATCH' selon votre route
         headers: {
           Authorization: `Bearer ${token}`,
@@ -725,7 +725,7 @@ const [isSubmitted, setIsSubmitted] = useState(false);
   const updatePassword = async (passwordData) => {
     try {
       const token = localStorage.getItem("auth-token");
-      const response = await fetch("http://api.hexagrow-indus.com/api/user/password", {
+      const response = await fetch("https://api.hexagrow-indus.com/api/user/password", {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
