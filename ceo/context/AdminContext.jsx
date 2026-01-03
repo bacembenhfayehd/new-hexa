@@ -43,7 +43,7 @@ export const AdminContextProvider = (props) => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/admin/products", {
+      const response = await fetch("http://api.hexagrow-indus.com/api/admin/products", {
         method: "POST",
         body: formData,
       });
@@ -69,7 +69,7 @@ export const AdminContextProvider = (props) => {
       formData.append(key, updateData[key]);
     });
     
-    const response = await fetch(`http://localhost:5000/api/admin/products/${productId}`, {
+    const response = await fetch(`http://api.hexagrow-indus.com/api/admin/products/${productId}`, {
       method: 'PUT',
       body: formData, // Pas de Content-Type header, laisse le navigateur gérer
     });
@@ -98,7 +98,7 @@ export const AdminContextProvider = (props) => {
       if (filters.sortBy) params.append("sortBy", filters.sortBy);
       if (filters.sortOrder) params.append("sortOrder", filters.sortOrder);
 
-      const url = `http://localhost:5000/api/admin/products${
+      const url = `http://api.hexagrow-indus.com/api/admin/products${
         params.toString() ? "?" + params.toString() : ""
       }`;
 
@@ -124,7 +124,7 @@ export const AdminContextProvider = (props) => {
   const getAllOrders = async (page = 1) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/admin/orders?page=${page}`,
+        `http://api.hexagrow-indus.com/api/admin/orders?page=${page}`,
         {
           method: "GET",
           headers: {
@@ -148,7 +148,7 @@ export const AdminContextProvider = (props) => {
    const fetchUsers = async (page = 1, limit = 10, search = "", sortBy = "createdAt", sortOrder = "desc") => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/api/admin/users", {
+      const res = await axios.get("http://api.hexagrow-indus.com/api/admin/users", {
         params: { page, limit, search, sortBy, sortOrder }
       });
 
@@ -167,7 +167,7 @@ export const AdminContextProvider = (props) => {
   const fetchComments = async ({ page = 1, limit = 10, search = "", sortBy = "createdAt", sortOrder = "desc" } = {}) => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/api/admin/", {
+      const res = await axios.get("http://api.hexagrow-indus.com/api/admin/", {
         params: { page, limit, search, sortBy, sortOrder }
       });
 
@@ -187,7 +187,7 @@ export const AdminContextProvider = (props) => {
 
   const deleteComment = async (commentId) => {
   try {
-    const response = await fetch(`http://localhost:5000/api/admin/comments/${commentId}`, {
+    const response = await fetch(`http://api.hexagrow-indus.com/api/admin/comments/${commentId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -214,7 +214,7 @@ export const AdminContextProvider = (props) => {
     console.log('ID utilisateur:', userId);
     console.log('Type ID:', typeof userId);
     
-    const response = await fetch(`http://localhost:5000/api/admin/usersdelete/${userId}`, {
+    const response = await fetch(`http://api.hexagrow-indus.com/api/admin/usersdelete/${userId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -243,7 +243,7 @@ export const AdminContextProvider = (props) => {
 const updateOrderStatus = async (orderId, newStatus) => {
   try {
     // Replace with your actual API endpoint
-    const response = await fetch(`http://localhost:5000/api/admin/orders/${orderId}/status`, {
+    const response = await fetch(`http://api.hexagrow-indus.com/api/admin/orders/${orderId}/status`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -268,7 +268,7 @@ const exportUsers = async () => {
   try {
     setLoading(true);
     
-    const response = await axios.get('http://localhost:5000/api/admin/users/export', {
+    const response = await axios.get('http://api.hexagrow-indus.com/api/admin/users/export', {
       responseType: 'blob' // Important: tells axios to handle binary data
     });
 
