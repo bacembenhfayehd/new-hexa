@@ -20,7 +20,7 @@ function Hero (){
   
   return (
     <>
-      <section className="hero bg-primary py-8">
+      <section className="hero bg-primary pt-24 md:pt-8 pb-8">
         <Container className="flex items-center justify-between md:flex-row flex-col">
           <div className="w-full md:w-1/2 text-white pr-12">
             <Title level={3} className="text-white">
