@@ -69,7 +69,7 @@ const handleUpdate = async (updatedData) => {
   const handleDelete = async (pdtID) => {
     try {
       const response = await fetch(
-        `https://localhost:5000/api/admin/products/${pdtID}`,
+        `https://api.hexagrow-indus.com/api/admin/products/${pdtID}`,
         {
           method: "DELETE",
           headers: {
