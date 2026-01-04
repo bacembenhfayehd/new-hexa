@@ -69,7 +69,7 @@ const handleUpdate = async (updatedData) => {
   const handleDelete = async (pdtID) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/admin/products/${pdtID}`,
+        `https://localhost:5000/api/admin/products/${pdtID}`,
         {
           method: "DELETE",
           headers: {
