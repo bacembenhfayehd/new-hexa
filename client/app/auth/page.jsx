@@ -33,7 +33,7 @@ useEffect(() => {
     setError("");
 
     try {
-      const url = `http://localhost:5000/api/auth/${loggingOrregister}`;
+      const url = `https://api.hexagrow-indus.com/api/auth/${loggingOrregister}`;
 
       const requestData =
         loggingOrregister === "register"
