@@ -182,7 +182,7 @@ const SearchBox = () => {
                   {product.image && (
                     <div className="w-16 h-16 rounded-lg overflow-hidden mr-4 flex-shrink-0">
                       <img 
-                        src={`http://localhost:5000${product.image}`} 
+                        src={`https://api.hexagrow-indus.com${product.image}`} 
                         alt={product.title} 
                         className="w-full h-full object-cover"
                       />

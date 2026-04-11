@@ -93,7 +93,7 @@ function Navbar() {
     e.preventDefault();
 
     try {
-      await fetch("http://localhost:5000/api/auth/logout", {
+      await fetch("https://api.hexagrow-indus.com/api/auth/logout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
