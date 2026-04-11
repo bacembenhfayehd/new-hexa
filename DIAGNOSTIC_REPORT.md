@@ -236,82 +236,113 @@ TLSv1 and TLSv1.1 are deprecated and insecure. Modern browsers don't use them, b
 
 ---
 
-## Recommended Action Plan
+## Action Plan — Status as of 2026-04-11
 
-### Phase 1 — Stop the Bleeding (Day 1)
+### Phase 1 — Stop the Bleeding (COMPLETED 2026-04-11)
+
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 1 | Fix localhost URLs in `Navbar.jsx` and `Hero.jsx` | DONE | Commit `b4140f1` — replaced `http://localhost:5000` with `https://api.hexagrow-indus.com` |
+| 2 | Set `NEXT_PUBLIC_CURRENCY` in client `.env.local` | SKIPPED | User deferred |
+| 3 | Rebuild both Next.js apps on VPS (`npm run build`) | DONE | Built without turbopack (`npx next build --no-lint`). Turbopack builds were missing CSS and `images.remotePatterns` |
+| 4 | Verify server `.env` has correct `PORT`, `MONGO_URI`, `CORS_ORIGINS` | DONE | PORT=5000, MONGO_URI points to Atlas (cluster was paused, resumed), CORS_ORIGINS verified |
+
+### Phase 2 — Stabilize (COMPLETED 2026-04-11)
+
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 5 | Create `ecosystem.config.cjs` and deploy with PM2 | DONE | Created at `/srv/hexagrow/new-hexa/ecosystem.config.cjs` with `max_memory_restart` limits |
+| 6 | Run `pm2 save && pm2 startup` | DONE | Systemd service `pm2-ubuntu` created and enabled |
+| 7 | Kill all zombie Node processes, clean start | DONE | Multiple PM2 daemon resets required (stuck sockets, zombie `next-server` processes) |
+| 8 | Add `trust proxy` to Express | DONE | Commit `f8bab24` — `express-rate-limit` was rejecting all requests behind Nginx due to `X-Forwarded-For` without trust proxy |
+| 9 | Add 2GB swap | DONE | `/swapfile` created to prevent OOM kills |
+| 10 | Increase Nginx proxy timeouts | DONE | `proxy_read_timeout 120s` on all 3 vhosts |
+| 11 | Restore `globals.css` on VPS | DONE | VPS had old boilerplate version; `git checkout` restored Tailwind v4 theme with custom colors |
+| 12 | Restore `next.config.mjs` on VPS | DONE | VPS was missing `images.remotePatterns` for Cloudinary; `git checkout` restored it |
+| 13 | Resume MongoDB Atlas cluster | DONE | Cluster was auto-paused due to inactivity, causing `ENOTFOUND` DNS errors |
+
+### Phase 3 — Harden (TODO)
 
 | # | Task | Risk if skipped |
 |---|------|-----------------|
-| 1 | Fix localhost URLs in `Navbar.jsx` and `Hero.jsx` | Logout broken, hero images broken for all users |
-| 2 | Set `NEXT_PUBLIC_CURRENCY` in client `.env.local` | Prices show "undefined" |
-| 3 | Rebuild both Next.js apps on VPS (`npm run build`) | Old broken build continues serving |
-| 4 | Verify server `.env` has correct `PORT`, `MONGO_URI`, `CORS_ORIGINS` | API may be unreachable |
-
-### Phase 2 — Stabilize (Day 2-3)
-
-| # | Task | Risk if skipped |
-|---|------|-----------------|
-| 5 | Create `ecosystem.config.cjs` and deploy with PM2 | Services die and stay dead |
-| 6 | Run `pm2 save && pm2 startup` | Reboot = full outage |
-| 7 | Kill all zombie Node processes, clean start | Port conflicts, memory waste |
-| 8 | Add health endpoint + uptime monitoring | Blind to outages |
-
-### Phase 3 — Harden (Week 1-2)
-
-| # | Task | Risk if skipped |
-|---|------|-----------------|
-| 9 | Replace all hardcoded API URLs with `NEXT_PUBLIC_API_URL` | Can't develop locally, fragile |
-| 10 | Upgrade Node.js to v20 LTS | No security patches |
-| 11 | Fix TLS config (drop TLSv1/1.1) | Security audit failure |
-| 12 | Create `.env.example` files for all 3 services | Next developer is lost |
-| 13 | Set up basic deployment script or CI | Every deploy is manual and error-prone |
+| 1 | Replace all hardcoded API URLs with `NEXT_PUBLIC_API_URL` | Can't develop locally, fragile, risk of future localhost leaks |
+| 2 | Upgrade Node.js to v20 LTS | No security patches (v18 is EOL since April 2025) |
+| 3 | Fix TLS config (drop TLSv1/1.1) | Security audit failure |
+| 4 | Create `.env.example` files for all 3 services | Next developer is lost |
+| 5 | Set up basic deployment script or CI | Every deploy is manual and error-prone |
+| 6 | Prevent MongoDB Atlas auto-pause | Add cron: `0 */4 * * * curl -s "https://api.hexagrow-indus.com/api/admin/products?limit=1" > /dev/null` or upgrade to M10+ |
+| 7 | Add health endpoint + uptime monitoring | Blind to outages |
+| 8 | Never edit files directly on VPS | VPS had diverged `globals.css` and `next.config.mjs` — always deploy via git pull |
 
 ---
 
-## Resource Constraints
+## Issues Discovered and Fixed During Stabilization
 
-The VPS (4 vCores, 8 GB RAM, 75 GB storage) is adequate for this workload, but running 2 Next.js SSR apps + 1 Express server + MongoDB (if local) on 8 GB is tight. Key concerns:
+### 1. PM2 daemon freezes
+PM2 would freeze on `pm2 start` commands, requiring full daemon kills (`pkill -9 pm2`, socket cleanup). Root cause: stale PM2 daemon processes and socket files. Fix: always clean sockets before restarting daemon, use `ecosystem.config.cjs` instead of individual `pm2 start` commands.
 
-- **Each Next.js production process uses ~300-500 MB RAM** at baseline
-- **MongoDB (if local) needs ~1-2 GB** for decent performance
-- **Total estimated usage:** 2-3 GB for apps + 1-2 GB for MongoDB + 1 GB for OS = ~5 GB, leaving ~3 GB headroom
-- **Risk:** Under load, Next.js SSR can spike memory. The `max_memory_restart` in the PM2 config above will auto-restart processes that exceed limits, preventing full OOM.
+### 2. `express-rate-limit` blocking all requests
+The rate limiter threw `ERR_ERL_UNEXPECTED_X_FORWARDED_FOR` because Nginx sends `X-Forwarded-For` but Express didn't have `trust proxy` set. Every API request was silently rejected. Fix: `app.set('trust proxy', 1)`.
 
-If MongoDB is hosted externally (Atlas), the situation is more comfortable.
+### 3. Next.js build with Turbopack produces incomplete CSS
+Building with `--turbopack` (in the `build` script) generated a `.next/static/` directory with no `css/` folder. All Tailwind classes were missing. Fix: build with standard Webpack (`npx next build --no-lint`).
 
----
+### 4. VPS files diverged from git
+`client/app/globals.css` and `client/next.config.mjs` were manually edited on the VPS, removing all custom Tailwind theme colors and Cloudinary image patterns. Fix: `git checkout -- <file>` to restore from repo.
 
-## What the Perplexity Sessions Got Wrong
+### 5. MongoDB Atlas auto-pause
+Free-tier Atlas clusters pause after prolonged inactivity. The server crashed in a loop with `ENOTFOUND` DNS errors. Fix: resume cluster manually, consider adding a keep-alive cron.
 
-The debugging sessions focused almost entirely on **Nginx timeouts** and **PM2 commands**, but the actual problems are:
-
-1. **Application-level bugs** (localhost URLs) that no amount of Nginx tuning will fix
-2. **Missing builds** — `next start` requires a prior `next build`. If the build fails or was never run, the process starts and immediately dies
-3. **Missing environment variables** — without `PORT`, the Express server binds to `undefined` and crashes
-4. **Process management** was treated as "run these commands" rather than "create a reproducible configuration"
-
-The symptom (504 Gateway Timeout) was correctly identified, but the diagnosis stayed at the infrastructure layer when the root causes are in the application code and deployment process.
+### 6. Next.js build hangs on type-checking
+`next build` would hang indefinitely at "Linting and checking validity of types" on the VPS. Fix: skip type-checking with `NEXT_PRIVATE_SKIP_TYPECHECKING=1 npx next build --no-lint`.
 
 ---
 
-## Verification Checklist (Run on VPS after fixes)
+## Resource Status (Post-Fix)
+
+| Resource | Value |
+|----------|-------|
+| RAM total | 7.6 GB |
+| RAM used (3 services running) | ~3.1 GB |
+| RAM available | ~4.5 GB |
+| Swap | 2 GB (newly added) |
+| hexagrow-server memory | ~103 MB |
+| hexagrow-client memory | ~226 MB |
+| hexagrow-ceo memory | ~185 MB |
+| MongoDB | Atlas (external, free tier) |
+
+---
+
+## Current Production State (Verified 2026-04-11 21:28 UTC)
+
+| Service | URL | Status | Port |
+|---------|-----|--------|------|
+| Client | https://hexagrow-indus.com | HTTP 200 | 3000 |
+| CEO Admin | https://admin.hexagrow-indus.com | HTTP 200 | 3001 |
+| API Server | https://api.hexagrow-indus.com | HTTP 200 | 5000 |
+
+All services running via PM2 with auto-restart on crash and auto-start on reboot.
+
+---
+
+## Verification Checklist (Run on VPS to verify stability)
 
 ```bash
 # 1. All services are running
 pm2 status
 
 # 2. All ports are listening
-ss -ltnp | grep -E ':(3000|3001|4000)'
+ss -ltnp | grep -E ':(3000|3001|5000)'
 
 # 3. All services respond locally
 curl -I --max-time 5 http://127.0.0.1:3000/
 curl -I --max-time 5 http://127.0.0.1:3001/
-curl -I --max-time 5 http://127.0.0.1:4000/health
+curl -I --max-time 5 http://127.0.0.1:5000/api/admin/products?limit=1
 
 # 4. All domains respond externally
 curl -I --max-time 10 https://hexagrow-indus.com
 curl -I --max-time 10 https://admin.hexagrow-indus.com
-curl -I --max-time 10 https://api.hexagrow-indus.com/health
+curl -I --max-time 10 "https://api.hexagrow-indus.com/api/admin/products?limit=1"
 
 # 5. No localhost references in built client code
 grep -r "localhost" /srv/hexagrow/new-hexa/client/.next/ 2>/dev/null | grep -v node_modules
@@ -321,4 +352,8 @@ pm2 save
 sudo reboot
 # After reboot:
 pm2 status
+
+# 7. Check for recent errors
+sudo tail -20 /var/log/nginx/error.log
+pm2 logs --lines 20 --nostream
 ```
