@@ -1,4 +1,5 @@
 import CategorySlider from "@/components/CategorySlider";
+import Certifications from "@/components/Certifications";
 import Hero from "@/components/Hero";
 import Process from "@/components/Process";
 import ProductList from "@/components/ProductList";
@@ -12,6 +13,7 @@ export default function Home() {
     <CategorySlider/>
     <ProductList/>
     <Process/>
+    <Certifications/>
     <Trust/>
     </div>
   );
