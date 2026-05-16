@@ -83,12 +83,12 @@ const ProfileCard = ({ children, className }) => {
 
 const Heading = ({ title, subtitle }) => {
   return (
-    <>
+    <div className="text-center">
       <Title level={4}>{title}</Title>
-      <div className="w-1/2">
+      <div className="mt-2 max-w-2xl mx-auto">
         <Caption>{subtitle}</Caption>
       </div>
-    </>
+    </div>
   );
 };
 
