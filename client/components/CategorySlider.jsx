@@ -14,13 +14,13 @@ function CategorySlider() {
             subtitle="Catégories les plus vues et les plus vendues de tous les temps"
           />
           
-          <div className="grid grid-cols-2 md:grid-cols-7 gap-5 my-8">
+          <div className="flex flex-wrap justify-center gap-5 my-8">
             {categorylists.map((item) => (
               <Link
                 key={item.id}  // ✅ Key ici sur Link
                 href={`/products/${encodeURIComponent(item.title)}`}  // ✅ Encoder l'URL
                 onClick={() => window.scrollTo(0, 0)}
-                className="block hover:scale-105 transition-transform duration-200"
+                className="block w-[calc((100%_-_20px)/2)] md:w-[calc((100%_-_120px)/7)] hover:scale-105 transition-transform duration-200"
               >
                 <CategoryCard item={item} />
               </Link>

@@ -13,9 +13,9 @@ function Trust (){
             subtitle="Découvrez le meilleur et le plus grand marché  grâce à nos produits. Nous voulons contribuer à votre bonheur, à votre réussite et à votre croissance future."
           />
 
-          <div className="content grid grid-cols-3 md:grid-cols-7 gap-5 mt-8">
+          <div className="content flex flex-wrap justify-center gap-5 mt-8">
             {trustList.map((item, index) => (
-              <div key={index} className="flex items-center justify-between  rounded-lg">
+              <div key={index} className="flex items-center justify-center w-[calc((100%_-_40px)/3)] md:w-[calc((100%_-_120px)/7)] rounded-lg">
                 <div className="flex items-center justify-center">
                   <Image src={item.profile} alt={item.profile} className="w-full h-full rounded-full object-contain flex items-center justify-center" />
                 </div>
