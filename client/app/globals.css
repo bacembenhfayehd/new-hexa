@@ -396,3 +396,27 @@ body {
     font-size: 0.9rem; /* Taille de police réduite */
   }
 }
+/* Trust logos infinite marquee */
+@keyframes trust-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.trust-marquee {
+  display: flex;
+  width: max-content;
+  animation: trust-marquee 30s linear infinite;
+}
+
+.trust-marquee:hover {
+  animation-play-state: paused;
+}
+
+.trust-marquee-mask {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trust-marquee { animation: none; }
+}
