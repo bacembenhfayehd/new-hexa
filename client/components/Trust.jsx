@@ -16,7 +16,7 @@ function Trust (){
           <div className="content trust-marquee-mask overflow-hidden mt-8">
             <div className="trust-marquee gap-5 md:gap-10">
               {[...trustList, ...trustList].map((item, index) => (
-                <div key={index} className="flex items-center justify-center shrink-0 w-[calc((100%_-_40px)/3)] md:w-[140px] rounded-lg">
+                <div key={index} className="flex items-center justify-center shrink-0 w-[90px] md:w-[140px] rounded-lg">
                   <div className="flex items-center justify-center">
                     <Image src={item.profile} alt={item.profile} className="w-full h-full rounded-full object-contain flex items-center justify-center" />
                   </div>
